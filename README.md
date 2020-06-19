@@ -18,7 +18,7 @@ The following componenents are included:
 * Data used under `data`
 
 ## Tree
-
+```
 ├── auto_encoder
 │   ├── learn.py
 │   └── README.md
@@ -38,10 +38,11 @@ The following componenents are included:
 │   └── README.md
 ├── LICENSE
 └── README.md
+```
 
 # Framework
 The framework is shown in the Figure bellow.
-
+![Framework](/figs/framework.png =250x)
 
 # Paper
 
