@@ -1,7 +1,11 @@
 # Ground classifier
 (see the paper for more details)
 
-To run the scrip you will need the data.
+***
+***To run the scrip you will need the data.***
+The data needs to be of shape: (samples x sequence_length x number_of_features)
+The labels need to be of shape: (samples x number_of_categories)
+***
 
 The help text:
 ```bash
