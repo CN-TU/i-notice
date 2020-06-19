@@ -11,6 +11,7 @@
 # Notes       : 
 #
 # Change-log  : 18-06-2020: //FM// Initial commit
+#               19-06-2020: //FM// finish the code cleanup
 #
 # TODOs       : outsource variables more
 #
@@ -33,26 +34,28 @@ from keras.optimizers import Adam
 #******************************************************************************
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--vector', required=True)
-parser.add_argument('--sequence_length', required=True)
-parser.add_argument('--mode', required=True)
-parser.add_argument('--training_data')
-parser.add_argument('--training_labels')
-parser.add_argument('--test_data')
-parser.add_argument('--test_labels')
+parser.add_argument('--vector', default='baseline', choices=['baseline', 'wPorts', 'ipsec'], help='which representation to use (default baseline)')
+parser.add_argument('--sequence_length', default='20', help='number of packets in te input sequence (default 20)')
+parser.add_argument('--mode', default='binary', choices=['binary', 'multiclass'], help='binary or multiclass classification (default binary)')
+parser.add_argument('--training_data', help='source path of training data', metavar='IN_PATH')
+parser.add_argument('--training_labels', help='source path of training labels', metavar='IN_PATH')
+parser.add_argument('--test_data', help='source path of testing data', metavar='IN_PATH')
+parser.add_argument('--test_labels', help='source path of testing labels', metavar='IN_PATH')
+parser.add_argument('--predict', help='make predictions from test data', metavar='OUT_PATH')
 
-parser.add_argument('--train',  action='store_true')
-parser.add_argument('--test',  action='store_false')
-parser.add_argument('--split_data',  action='store_false')
+parser.add_argument('--train', help='train a new model', action='store_true')
+parser.add_argument('--test', help='test the model', action='store_false')
+parser.add_argument('--split_data', help='split the training data into training and testing propotions', action='store_false')
 
-parser.add_argument('--load_model')
-parser.add_argument('--store_model')
+parser.add_argument('--load_model', help='load a pretrained model', metavar='IN_PATH')
+parser.add_argument('--store_model', help='save the model after training', metavar='OUT_PATH')
 
-parser.add_argument('--verbose')
-parser.add_argument('--epochs')
-parser.add_argument('--batch_size')
+parser.add_argument('--verbose', default=1, type=int, help='verbose level (default 1)')
+parser.add_argument('--epochs', default=128, type=int, help='number of epochs (default 128)')
+parser.add_argument('--batch_size', default=32, type=int, help='batch size during training (default 32)')
 
-parser.add_argument('--freeze', action='store_true')
+parser.add_argument('--plot', help='generate plots of accuracy and loss', metavar='OUT_PATH')
+
 args = parser.parse_args()
 
 #******************************************************************************
@@ -63,6 +66,8 @@ X_train_path = args.training_data
 y_train_path = training_labels
 X_test_path = test_data
 y_test_path = training_labels
+
+_predict = args.predict
 
 _train = args.train
 _test = args.test
@@ -82,6 +87,8 @@ batch_size = args.batch_size
 
 _load_model = args.load_model
 _save_model = args.save_model
+
+_plot = args.plot
 
 #******************************************************************************
 
@@ -143,6 +150,26 @@ def read_data():
             pass
     return X, X_test, y, y_test
 
+def make_plot(history, _name):
+    # summarize history for accuracy
+    plt.figure()
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('{}_acc.png'.format(_name))
+    # summarize history for loss
+    plt.figure()
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('{}_loss.png'.format(_name)) 
+
 #******************************************************************************
 
 def main():
@@ -152,6 +179,7 @@ def main():
         X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.3, random_state=seed)
 
     if _train:
+        print('INFO: Start training')
         if not X_train and not y_train:
             print("WARNING: No training data or labels...Exiting!")
             exit(1)
@@ -172,15 +200,20 @@ def main():
         else:
             history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose, callbacks=[es])
 
-
         if _save_model:
             model.save(_save_model)
+            print('INFO: Model trained and saved under {}'.format(_save_model))
+
+        if _plot:
+            make_plot(history, _plot)
 
     if _test:
+        print('INFO: Start testing')
         if _predict:
             if X_test:
-                # do something
-                _, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=verbose)
+                pred = model.predict(Xnew)
+                np.save('', pred)
+                print('INFO: Predictions saved under {}'.format(_predict))
             else:
                 print("WARNING: No testing data...Exiting!")
                 exit(1)
