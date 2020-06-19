@@ -35,7 +35,7 @@ from keras.optimizers import Adam
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--vector', default='baseline', choices=['baseline', 'wPorts', 'ipsec'], help='which representation to use (default baseline)')
-parser.add_argument('--sequence_length', default='20', help='number of packets in te input sequence (default 20)')
+parser.add_argument('--sequence_length', default='20', help='number of packets in the input sequence (default 20)')
 parser.add_argument('--mode', default='binary', choices=['binary', 'multiclass'], help='binary or multiclass classification (default binary)')
 parser.add_argument('--training_data', help='source path of training data', metavar='IN_PATH')
 parser.add_argument('--training_labels', help='source path of training labels', metavar='IN_PATH')

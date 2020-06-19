@@ -23,7 +23,7 @@ optional arguments:
   --vector {baseline,wPorts,ipsec}
                         which representation to use (default baseline)
   --sequence_length SEQUENCE_LENGTH
-                        number of packets in te input sequence (default 20)
+                        number of packets in the input sequence (default 20)
   --mode {binary,multiclass}
                         binary or multiclass classification (default binary)
   --training_data IN_PATH

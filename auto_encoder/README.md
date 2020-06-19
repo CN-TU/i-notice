@@ -16,6 +16,7 @@ The script does the following:
 Notes:
 * the AE architeecture can be altered based on needs.
 * instead of MAWI, CICIDS17 also can be used to train the feature extractor.
+* the code represents the binary variant of iNotice with the baseline representation and 20-long sequences
 
 
 # Contact
